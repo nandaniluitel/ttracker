@@ -1,24 +1,28 @@
 package com.example.ttracker.adapters.out.persistence.entity;
 
+import com.example.ttracker.domain.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import java.time.Instant;
+
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class UserEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false, unique = true)
     private String email;
-    @Column(name="password_hash", nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
     @Column(nullable = false)
     private String role;
-    @Column(name="created_at", nullable = false)
+    @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
     public Long getId() {
@@ -59,5 +63,16 @@ public class UserEntity {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public UserEntity(String email, String passwordHash, String role, Instant createdAt) {
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.role = role;
+        this.createdAt = createdAt;
+    }
+
+    public static UserEntity from(User user) {
+        return new UserEntity(user.email(), user.passwordHash(), user.role().name(), user.createdAt());
     }
 }

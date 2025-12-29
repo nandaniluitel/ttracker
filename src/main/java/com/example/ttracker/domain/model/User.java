@@ -10,4 +10,5 @@ public record User(
     Role role,
     Instant createdAt
 
-) {}
+) {
+}

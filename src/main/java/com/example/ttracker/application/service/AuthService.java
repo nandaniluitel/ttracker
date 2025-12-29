@@ -24,7 +24,7 @@ public class AuthService implements AuthUseCases {
     }
 
     @Override
-    public User register(RegisterCommand command) {
+    public void register(RegisterCommand command) {
       String email=command.email().trim().toLowerCase();
 
       userRepository.findByEmail(email).ifPresent(u->{
@@ -33,7 +33,7 @@ public class AuthService implements AuthUseCases {
       Role role=userRepository.findByEmail(email).isEmpty() ? Role.USER : Role.USER;
 
       User userToSave = new User(null,email,passwordHash.hash(command.password()),role, Instant.now());
-      return userRepository.save(userToSave);
+      userRepository.save(userToSave);
 
     }
 
