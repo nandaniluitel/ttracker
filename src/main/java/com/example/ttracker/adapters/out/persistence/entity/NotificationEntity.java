@@ -1,4 +1,5 @@
 package com.example.ttracker.adapters.out.persistence.entity;
+import com.example.ttracker.domain.model.Notification;
 import jakarta.persistence.*;
 import java.time.Instant;
 
@@ -16,6 +17,9 @@ public class NotificationEntity {
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
+
+    public NotificationEntity() {
+    }
 
     public Long getId() {
         return id;
@@ -48,4 +52,16 @@ public class NotificationEntity {
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
+
+    public static NotificationEntity from(Notification notification)
+    {
+        NotificationEntity notificationEntity=new NotificationEntity();
+        notificationEntity.setId(notification.id());
+        notificationEntity.setTicketId(notification.ticketId());
+        notificationEntity.setMessage(notification.message());
+        notificationEntity.setCreatedAt(notification.createdAt());
+        return notificationEntity;
+    }
 }
+
+

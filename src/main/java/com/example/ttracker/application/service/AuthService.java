@@ -5,8 +5,7 @@ import com.example.ttracker.application.port.in.LoginCommand;
 import com.example.ttracker.application.port.in.RegisterCommand;
 import com.example.ttracker.application.port.out.PasswordHashPort;
 import com.example.ttracker.application.port.out.UserRepositoryPort;
-import com.example.ttracker.application.service.Exception.ForbiddenException;
-import com.example.ttracker.application.service.Exception.NotFoundException;
+
 import com.example.ttracker.domain.model.Role;
 import com.example.ttracker.domain.model.User;
 import org.springframework.stereotype.Service;
@@ -24,7 +23,7 @@ public class AuthService implements AuthUseCases {
     }
 
     @Override
-    public void register(RegisterCommand command) {
+    public User register(RegisterCommand command) {
       String email=command.email().trim().toLowerCase();
 
       userRepository.findByEmail(email).ifPresent(u->{
@@ -33,7 +32,7 @@ public class AuthService implements AuthUseCases {
       Role role=userRepository.findByEmail(email).isEmpty() ? Role.USER : Role.USER;
 
       User userToSave = new User(null,email,passwordHash.hash(command.password()),role, Instant.now());
-      userRepository.save(userToSave);
+      return userRepository.save(userToSave);
 
     }
 
@@ -41,10 +40,10 @@ public class AuthService implements AuthUseCases {
     public void login(LoginCommand loginCommand) {
         String email = loginCommand.email().trim().toLowerCase();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(()->new NotFoundException("Invalid credentials"));
+                .orElseThrow(()->new IllegalArgumentException("Invalid credentials"));
 
         if(!passwordHash.matches(loginCommand.password(),user.passwordHash())){
-            throw new ForbiddenException("Invalid credentials");
+            throw new IllegalArgumentException("Invalid credentials");
         }
 
     }

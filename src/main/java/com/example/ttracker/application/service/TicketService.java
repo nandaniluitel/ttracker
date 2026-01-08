@@ -90,7 +90,7 @@ public class TicketService implements TicketUseCases {
 
         Role role=currentUser.currentUserRole();
         if(role == Role.USER && !existing.createdByUserId().equals(currentUser.currentUserId())){
-            throw new RuntimeException("you can only update your own tickets");
+            throw new ForbiddenException("you can only update your own tickets");
         }
 
         Ticket updated = new Ticket(existing.id(), existing.title(),existing.description(),newStatus,existing.createdAt(),existing.createdByUserId());
@@ -109,6 +109,10 @@ public class TicketService implements TicketUseCases {
         ticketHistoryRepository.save(history);
         return saved;
 
-
+    }
+    public static class ForbiddenException extends RuntimeException {
+        public ForbiddenException(String message) {
+            super(message);
+        }
     }
 }

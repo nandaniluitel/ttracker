@@ -65,6 +65,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>ttracker</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

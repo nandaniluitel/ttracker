@@ -1,5 +1,6 @@
 package com.example.ttracker.adapters.out.persistence.entity;
 
+import com.example.ttracker.domain.model.Role;
 import com.example.ttracker.domain.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -72,7 +73,14 @@ public class UserEntity {
         this.createdAt = createdAt;
     }
 
+    public UserEntity() {
+    }
+
     public static UserEntity from(User user) {
         return new UserEntity(user.email(), user.passwordHash(), user.role().name(), user.createdAt());
+    }
+    public static User toDomain(UserEntity userEntity)
+    {
+        return new User(userEntity.getId(), userEntity.getEmail(), userEntity.getPasswordHash(), Role.valueOf(userEntity.getRole().toString()),userEntity.createdAt);
     }
 }
