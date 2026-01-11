@@ -1,0 +1,5 @@
+Jan 11:
+- Authentication must use JWT tokens for improved security.
+- Fix the tests as well. if you are having trouble with assertions, use assertions assertJ library.
+- Use Mocktio.mock() instead of @Mock to avoid importing the whole Mockito framework.
+- Use testcotainer for integration tests for database interactions.
