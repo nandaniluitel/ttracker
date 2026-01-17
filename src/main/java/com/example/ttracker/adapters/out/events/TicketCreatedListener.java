@@ -14,11 +14,11 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import java.time.Instant;
 
 @Component
-public class TicketCreatedAfterCommitListener {
-    private static final Logger log = LoggerFactory.getLogger(TicketCreatedAfterCommitListener.class);
+public class TicketCreatedListener {
+    private static final Logger log = LoggerFactory.getLogger(TicketCreatedListener.class);
     private final NotificationRepositoryPort notificationRepositoryPort;
 
-    public TicketCreatedAfterCommitListener(NotificationRepositoryPort notificationRepositoryPort) {
+    public TicketCreatedListener(NotificationRepositoryPort notificationRepositoryPort) {
         this.notificationRepositoryPort = notificationRepositoryPort;
     }
 

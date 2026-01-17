@@ -4,6 +4,7 @@ import com.example.ttracker.adapters.out.events.TicketCreatedListener;
 import com.example.ttracker.application.port.out.NotificationRepositoryPort;
 import com.example.ttracker.domain.event.TicketCreatedEvent;
 import com.example.ttracker.domain.model.Notification;
+import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.time.Instant;
@@ -11,21 +12,22 @@ import java.time.Instant;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
-public class TicketCreatedAfterCommitListenerTest {
+public class TicketCreatedListenerTest extends MySqlTestcontainerBase{
 
-    public static void main(String[] args) {
-        afterCommit_savesNotificationWithCorrectValues();
-        System.out.println("✅ Listener unit test passed.");
-    }
+    private final NotificationRepositoryPort notificationRepository = mock(NotificationRepositoryPort.class);
+    private final TicketCreatedListener listener = new TicketCreatedListener(notificationRepository);
 
-    static void afterCommit_savesNotificationWithCorrectValues() {
-        NotificationRepositoryPort notificationRepository = mock(NotificationRepositoryPort.class);
-        TicketCreatedListener listener = new TicketCreatedListener(notificationRepository);
 
+    @Test
+    public void afterCommit_savesNotificationWithCorrectValues() {
+
+        //given
         TicketCreatedEvent event = new TicketCreatedEvent(11L, 1L, Instant.now());
 
+        //when
         listener.afterCommit(event);
 
+        //then
         ArgumentCaptor<Notification> captor = ArgumentCaptor.forClass(Notification.class);
         verify(notificationRepository, times(1)).save(captor.capture());
 

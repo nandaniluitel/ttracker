@@ -3,16 +3,17 @@ package com.example.ttracker.application.service;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-public abstract class MySqlTestcontainerBase {
+@Testcontainers
+public class MySqlTestcontainerBase {
+
+    @Container
     static final MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4")
             .withDatabaseName("ttracker")
             .withUsername("test")
             .withPassword("test");
-
-    static {
-        mysql.start();
-    }
 
     @DynamicPropertySource
     static void registerProps(DynamicPropertyRegistry registry) {
@@ -22,7 +23,6 @@ public abstract class MySqlTestcontainerBase {
 
         //optional but good for MySQL
         registry.add("spring.datasouce.driver-class-name", mysql::getDriverClassName);
-
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "update");
         registry.add("spring.flyway.enabled", () -> "false");
     }

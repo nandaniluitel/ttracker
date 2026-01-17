@@ -47,8 +47,11 @@ public class TicketServiceTest {
                     t.createdByUserId()
             );
         });
+
         //act
-        Ticket saved = service.create(new CreateTicketCommand(" Ticket test 1 ", " Desc "));
+        CreateTicketCommand sampleCommand = new CreateTicketCommand(" Ticket test 1 ", " Desc ");
+        Ticket saved = service.create(sampleCommand);
+
         //assert
         assertThat(saved.id()).isEqualTo(100L);
         assertThat(saved.title()).isEqualTo("Ticket test 1");
@@ -66,6 +69,8 @@ public class TicketServiceTest {
         assertThat(ticketToSave.description()).isEqualTo("Desc");
         assertThat(ticketToSave.status()).isEqualTo(TicketStatus.OPEN);
         assertThat(ticketToSave.createdByUserId()).isEqualTo(42L);
+
+
         //verify history saved
         ArgumentCaptor<TicketHistory> histCaptor = ArgumentCaptor.forClass(TicketHistory.class);
         verify(ticketHistoryRepository, times(1)).save(histCaptor.capture());
