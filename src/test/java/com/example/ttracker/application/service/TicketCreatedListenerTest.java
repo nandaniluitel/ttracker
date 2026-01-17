@@ -1,6 +1,6 @@
 package com.example.ttracker.application.service;
 
-import com.example.ttracker.adapters.out.events.TicketCreatedAfterCommitListener;
+import com.example.ttracker.adapters.out.events.TicketCreatedListener;
 import com.example.ttracker.application.port.out.NotificationRepositoryPort;
 import com.example.ttracker.domain.event.TicketCreatedEvent;
 import com.example.ttracker.domain.model.Notification;
@@ -20,7 +20,7 @@ public class TicketCreatedAfterCommitListenerTest {
 
     static void afterCommit_savesNotificationWithCorrectValues() {
         NotificationRepositoryPort notificationRepository = mock(NotificationRepositoryPort.class);
-        TicketCreatedAfterCommitListener listener = new TicketCreatedAfterCommitListener(notificationRepository);
+        TicketCreatedListener listener = new TicketCreatedListener(notificationRepository);
 
         TicketCreatedEvent event = new TicketCreatedEvent(11L, 1L, Instant.now());
 
