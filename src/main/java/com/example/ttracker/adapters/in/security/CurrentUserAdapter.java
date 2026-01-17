@@ -1,5 +1,6 @@
 package com.example.ttracker.adapters.in.security;
 
+import com.example.ttracker.adapters.in.security.jwt.AuthPrincipal;
 import com.example.ttracker.application.port.out.CurrentUserPort;
 import com.example.ttracker.application.port.out.UserRepositoryPort;
 import com.example.ttracker.domain.model.Role;
@@ -10,29 +11,29 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CurrentUserAdapter implements CurrentUserPort {
-    private final UserRepositoryPort users;
 
-    public CurrentUserAdapter(UserRepositoryPort users) {
-        this.users = users;
-    }
+
 
     @Override public Long currentUserId() {
-        return currentUser().id();
+        AuthPrincipal p = principal();
+        return p.userId();
     }
 
     @Override public Role currentUserRole() {
-        return currentUser().role();
+        AuthPrincipal p=principal();
+        return p.role();
     }
 
     @Override public String CurrentUserEmail() {
-        return currentUser().email();
+        AuthPrincipal p=principal();
+        return p.email();
     }
-    private User currentUser(){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if(auth==null || auth.getName()==null){
+    private AuthPrincipal principal(){
+        Authentication auth=SecurityContextHolder.getContext().getAuthentication();
+        if(auth==null ){
             throw new IllegalStateException("No authenticated user");
         }
-        String email= auth.getName().trim().toLowerCase();
-        return users.findByEmail(email).orElseThrow(()->new IllegalStateException("User not found in DB"));
+        Object p=auth.getPrincipal();
+        return(p instanceof AuthPrincipal ap)?ap:null;
     }
 }

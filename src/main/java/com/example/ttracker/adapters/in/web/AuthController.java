@@ -1,5 +1,6 @@
 package com.example.ttracker.adapters.in.web;
 
+import com.example.ttracker.application.port.in.AuthResponse;
 import com.example.ttracker.application.port.in.AuthUseCases;
 import com.example.ttracker.application.port.in.LoginCommand;
 import com.example.ttracker.application.port.in.RegisterCommand;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthUseCases auth;
 
+
     public AuthController(AuthUseCases auth) {
         this.auth = auth;
     }
@@ -30,9 +32,9 @@ public class AuthController {
     }
     public record LoginRequest(@Email @NotBlank String email, @NotBlank String password){};
     @PostMapping("/login")
-     public ResponseEntity<?> login(@Valid @RequestBody LoginRequest req){
-         auth.login(new LoginCommand(req.email, req.password));
-         return ResponseEntity.ok().body("OK");
+     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest req){
+         AuthResponse token= auth.login(new LoginCommand(req.email(), req.password()));
+         return ResponseEntity.ok(token);
      }
      }
 
