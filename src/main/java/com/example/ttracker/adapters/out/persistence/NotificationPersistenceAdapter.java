@@ -14,10 +14,11 @@ public class NotificationPersistenceAdapter implements NotificationRepositoryPor
         this.jpa = jpa;
     }
 
-    @Override public Notification save(Notification notification) {
-        NotificationEntity entity=NotificationEntity.from(notification);
-        NotificationEntity persisted=jpa.save(entity);
-        return new Notification(persisted.getId(),persisted.getTicketId(), persisted.getMessage(), persisted.getCreatedAt());
+    @Override
+    public Notification save(Notification notification) {
+        NotificationEntity entity = NotificationEntity.from(notification);
+        NotificationEntity persisted = jpa.save(entity);
+        return new Notification(persisted.getId(), persisted.getTicketId(), persisted.getMessage(), persisted.getCreatedAt());
 
     }
 }

@@ -1,16 +1,17 @@
 package com.example.ttracker.adapters.out.persistence.entity;
-import com.example.ttracker.domain.model.Ticket;
+
 import com.example.ttracker.domain.model.TicketHistory;
 import com.example.ttracker.domain.model.TicketHistoryAction;
 import com.example.ttracker.domain.model.TicketStatus;
 import jakarta.persistence.*;
+
 import java.time.Instant;
-import javax.swing.Action;
 
 @Entity
 @Table(name = "ticket_history")
 public class TicketHistoryEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "ticket_id", nullable = false)
@@ -32,8 +33,8 @@ public class TicketHistoryEntity {
     private Long changedByUserId;
 
     public TicketHistoryEntity(Long id, Long ticketId, String action, String oldStatus, String newStatus,
-        Instant changedAt,
-        Long changedByUserId) {
+                               Instant changedAt,
+                               Long changedByUserId) {
         this.id = id;
         this.ticketId = ticketId;
         this.action = action;
@@ -44,6 +45,17 @@ public class TicketHistoryEntity {
     }
 
     public TicketHistoryEntity() {
+    }
+
+    public static TicketHistoryEntity from(TicketHistory ticketHistory) {
+        return new TicketHistoryEntity(
+                ticketHistory.id(),
+                ticketHistory.ticketId(),
+                ticketHistory.action().name(),
+                ticketHistory.oldStatus() == null ? null : ticketHistory.oldStatus().name(),
+                ticketHistory.newStatus() == null ? null : ticketHistory.newStatus().name(),
+                ticketHistory.changedAt(),
+                ticketHistory.changedByUserId());
     }
 
     public Long getId() {
@@ -102,24 +114,14 @@ public class TicketHistoryEntity {
         this.changedByUserId = changedByUserId;
     }
 
-    public static TicketHistoryEntity from(TicketHistory ticketHistory) {
-        return new TicketHistoryEntity(
-            ticketHistory.id(),
-            ticketHistory.ticketId(),
-            ticketHistory.action().name(),
-        ticketHistory.oldStatus() == null ? null : ticketHistory.oldStatus().name(),
-            ticketHistory.newStatus() == null ? null : ticketHistory.newStatus().name(),
-            ticketHistory.changedAt(),
-            ticketHistory.changedByUserId());
-    }
-    public TicketHistory toDomain(){
+    public TicketHistory toDomain() {
         return new TicketHistory(
-            this.getId(),
-            this.getTicketId(),
-            TicketHistoryAction.valueOf(this.getAction()),
-            this.getOldStatus() == null ? null : TicketStatus.valueOf(this.getOldStatus()),
-            this.getNewStatus() == null?null:TicketStatus.valueOf(this.getNewStatus()),
-            this.getChangedAt(),
-            this.getChangedByUserId());
+                this.getId(),
+                this.getTicketId(),
+                TicketHistoryAction.valueOf(this.getAction()),
+                this.getOldStatus() == null ? null : TicketStatus.valueOf(this.getOldStatus()),
+                this.getNewStatus() == null ? null : TicketStatus.valueOf(this.getNewStatus()),
+                this.getChangedAt(),
+                this.getChangedByUserId());
     }
 }

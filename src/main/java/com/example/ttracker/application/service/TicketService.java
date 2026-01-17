@@ -8,12 +8,12 @@ import com.example.ttracker.application.port.out.TicketHistoryRepositoryPort;
 import com.example.ttracker.application.port.out.TicketRepositoryPort;
 import com.example.ttracker.domain.event.TicketCreatedEvent;
 import com.example.ttracker.domain.model.*;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+
 @Service
 public class TicketService implements TicketUseCases {
 
@@ -33,11 +33,11 @@ public class TicketService implements TicketUseCases {
     @Override
     public Ticket create(CreateTicketCommand command) {
         String title = command.title().trim();
-        String description= command.description().trim();
+        String description = command.description().trim();
 
-        Long userId=currentUser.currentUserId();
+        Long userId = currentUser.currentUserId();
 
-        Ticket ticketToSave=new Ticket(
+        Ticket ticketToSave = new Ticket(
                 null,
                 title,
                 description,
@@ -51,30 +51,30 @@ public class TicketService implements TicketUseCases {
         Ticket savedTicket = ticketRepository.save(ticketToSave);
 
         //rollback demo
-        if(title.toUpperCase().contains("FAIL")){
+        if (title.toUpperCase().contains("FAIL")) {
             throw new RuntimeException("Intentional failure to demonstrate transaction rollback");
         }
 
         //SAVE #2
-        TicketHistory ticketHistory=new TicketHistory(
+        TicketHistory ticketHistory = new TicketHistory(
                 null,
                 savedTicket.id(),
                 TicketHistoryAction.CREATED,
                 null,
-                 TicketStatus.OPEN,
+                TicketStatus.OPEN,
                 Instant.now(),
                 userId
         );
         ticketHistoryRepository.save(ticketHistory);
 
-        eventPublisher.publish(new TicketCreatedEvent(savedTicket.id(),userId,Instant.now()));
+        eventPublisher.publish(new TicketCreatedEvent(savedTicket.id(), userId, Instant.now()));
 
         return savedTicket;
     }
 
     @Override
     public Ticket getById(Long id) {
-        return ticketRepository.findById(id).orElseThrow(()->new NullPointerException("Ticket not found"));
+        return ticketRepository.findById(id).orElseThrow(() -> new NullPointerException("Ticket not found"));
     }
 
     @Override
@@ -86,14 +86,14 @@ public class TicketService implements TicketUseCases {
     @Transactional
     public Ticket changeStatus(Long ticketId, TicketStatus newStatus) {
         Ticket existing = ticketRepository.findById(ticketId)
-                .orElseThrow(()->new NullPointerException("Ticket not found"));
+                .orElseThrow(() -> new NullPointerException("Ticket not found"));
 
-        Role role=currentUser.currentUserRole();
-        if(role == Role.USER && !existing.createdByUserId().equals(currentUser.currentUserId())){
+        Role role = currentUser.currentUserRole();
+        if (role == Role.USER && !existing.createdByUserId().equals(currentUser.currentUserId())) {
             throw new ForbiddenException("you can only update your own tickets");
         }
 
-        Ticket updated = new Ticket(existing.id(), existing.title(),existing.description(),newStatus,existing.createdAt(),existing.createdByUserId());
+        Ticket updated = new Ticket(existing.id(), existing.title(), existing.description(), newStatus, existing.createdAt(), existing.createdByUserId());
 
         Ticket saved = ticketRepository.save(updated);
 
@@ -110,6 +110,7 @@ public class TicketService implements TicketUseCases {
         return saved;
 
     }
+
     public static class ForbiddenException extends RuntimeException {
         public ForbiddenException(String message) {
             super(message);

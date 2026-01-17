@@ -6,13 +6,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SecurityPasswordHasherAdapter implements PasswordHashPort {
-    private final BCryptPasswordEncoder encoder=new BCryptPasswordEncoder();
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-    @Override public String hash(String rawPassword) {
+    @Override
+    public String hash(String rawPassword) {
         return encoder.encode(rawPassword);
     }
 
-    @Override public boolean matches(String rawPassword, String passwordHash) {
-        return encoder.matches(rawPassword,passwordHash);
+    @Override
+    public boolean matches(String rawPassword, String passwordHash) {
+        return encoder.matches(rawPassword, passwordHash);
     }
 }

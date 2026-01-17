@@ -18,18 +18,17 @@ public class JwtTokenAdapterTest {
     }
 
 
+    static void generateToken_andExtractClaims_ok() {
+        String secret = "0123456789_0123456789_0123456789_0123456789";
+        long expirationSeconds = 3600;
+        JwtTokenAdapter adapter = new JwtTokenAdapter(secret, expirationSeconds);
 
-    static void generateToken_andExtractClaims_ok(){
-        String secret="0123456789_0123456789_0123456789_0123456789";
-        long expirationSeconds=3600;
-        JwtTokenAdapter adapter=new JwtTokenAdapter(secret,expirationSeconds);
-
-        Long userId=42L;
-        String email="user11@test.com";
+        Long userId = 42L;
+        String email = "user11@test.com";
         Role role = Role.USER;
 
         //when
-        String token= adapter.generateToken(userId,email,role);
+        String token = adapter.generateToken(userId, email, role);
 
         //then
         assertThat(token).isNotBlank();
@@ -38,6 +37,7 @@ public class JwtTokenAdapterTest {
         assertThat(adapter.extractUserId(token)).isEqualTo(userId);
         assertThat(adapter.extractRole(token)).isEqualTo(role);
     }
+
     static void tamperedToken_shouldFail() {
         // given
         String secret = "0123456789_0123456789_0123456789_0123456789";
@@ -50,8 +50,9 @@ public class JwtTokenAdapterTest {
 
         // then: any extract should throw because signature check fails
         assertThatThrownBy(() -> adapter.extractEmail(tampered))
-            .isInstanceOf(JwtException.class);
+                .isInstanceOf(JwtException.class);
     }
+
     static void expiredToken_shouldFail() {
         // given: expirationSeconds negative => token is immediately expired
         String secret = "0123456789_0123456789_0123456789_0123456789";
@@ -63,7 +64,7 @@ public class JwtTokenAdapterTest {
 
         // then
         assertThatThrownBy(() -> adapter.extractEmail(token))
-            .isInstanceOf(ExpiredJwtException.class);
+                .isInstanceOf(ExpiredJwtException.class);
     }
 
 

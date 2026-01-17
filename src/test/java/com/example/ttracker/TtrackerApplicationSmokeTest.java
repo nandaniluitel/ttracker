@@ -6,7 +6,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("test")
 public class TtrackerApplicationSmokeTest {
-    void contextLoads(){
+    void contextLoads() {
         //If the spring context starts, this test passes.
     }
 

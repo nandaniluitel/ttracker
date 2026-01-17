@@ -6,60 +6,49 @@ import com.example.ttracker.application.port.out.EventPublisherPort;
 import com.example.ttracker.application.port.out.TicketHistoryRepositoryPort;
 import com.example.ttracker.application.port.out.TicketRepositoryPort;
 import com.example.ttracker.domain.event.TicketCreatedEvent;
-import com.example.ttracker.domain.model.Role;
-import com.example.ttracker.domain.model.Ticket;
-import com.example.ttracker.domain.model.TicketHistory;
-import com.example.ttracker.domain.model.TicketHistoryAction;
-import com.example.ttracker.domain.model.TicketStatus;
+import com.example.ttracker.domain.model.*;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
 import java.time.Instant;
 import java.util.Optional;
-import org.mockito.ArgumentCaptor;
-import static org.mockito.ArgumentMatchers.any;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-
 public class TicketServiceTest {
-    public static void main(String[] args){
-        create_savesTicketHistory_PublishesEvent();
-        changeStatus_userCannotChangeOthers_throwsForbidden();
-        changeStatus_userCanChange();
-        changeStatus_adminCanChangeany();
-        changeStatus_ticketNotFound_throws_andDoesNotSaveAnything();
-        System.out.println("Testing doneeee");
-    }
-    static class Fixture{
-        final TicketRepositoryPort ticketRepository=mock(TicketRepositoryPort.class);
-        final TicketHistoryRepositoryPort ticketHistoryRepository=mock(TicketHistoryRepositoryPort.class);
-        final CurrentUserPort currentUser=mock(CurrentUserPort.class);
-        final EventPublisherPort eventPublisher=mock(EventPublisherPort.class);
-        final TicketService service=new TicketService(
+
+    private final TicketRepositoryPort ticketRepository = mock(TicketRepositoryPort.class);
+    private final TicketHistoryRepositoryPort ticketHistoryRepository = mock(TicketHistoryRepositoryPort.class);
+    private final CurrentUserPort currentUser = mock(CurrentUserPort.class);
+    private final EventPublisherPort eventPublisher = mock(EventPublisherPort.class);
+    private final TicketService service = new TicketService(
             ticketRepository,
             ticketHistoryRepository,
             currentUser,
             eventPublisher
-        );
-    }
+    );
 
-    static void create_savesTicketHistory_PublishesEvent(){
-        Fixture f=new Fixture();
-        //stud
-        when(f.currentUser.currentUserId()).thenReturn(42L);
-        when(f.ticketRepository.save(any(Ticket.class))).thenAnswer(inv->{
-            Ticket t=inv.getArgument(0);
+
+    @Test
+    public void create_savesTicketHistory_PublishesEvent() {
+        //stub
+        when(currentUser.currentUserId()).thenReturn(42L);
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(inv -> {
+            Ticket t = inv.getArgument(0);
             return new Ticket(
-                100L,
-                t.title(),
-                t.description(),
-                t.status(),
-                t.createdAt(),
-                t.createdByUserId()
+                    100L,
+                    t.title(),
+                    t.description(),
+                    t.status(),
+                    t.createdAt(),
+                    t.createdByUserId()
             );
         });
         //act
-        Ticket saved=f.service.create(new CreateTicketCommand(" Ticket test 1 "," Desc "));
+        Ticket saved = service.create(new CreateTicketCommand(" Ticket test 1 ", " Desc "));
         //assert
         assertThat(saved.id()).isEqualTo(100L);
         assertThat(saved.title()).isEqualTo("Ticket test 1");
@@ -70,8 +59,8 @@ public class TicketServiceTest {
 
         //verify  ticketRepo was called with trimmed data
         ArgumentCaptor<Ticket> ticketCaptor = ArgumentCaptor.forClass(Ticket.class);
-        verify(f.ticketRepository,times(1)).save(ticketCaptor.capture());
-        Ticket ticketToSave=ticketCaptor.getValue();
+        verify(ticketRepository, times(1)).save(ticketCaptor.capture());
+        Ticket ticketToSave = ticketCaptor.getValue();
         assertThat(ticketToSave.id()).isNull();
         assertThat(ticketToSave.title()).isEqualTo("Ticket test 1");
         assertThat(ticketToSave.description()).isEqualTo("Desc");
@@ -79,8 +68,8 @@ public class TicketServiceTest {
         assertThat(ticketToSave.createdByUserId()).isEqualTo(42L);
         //verify history saved
         ArgumentCaptor<TicketHistory> histCaptor = ArgumentCaptor.forClass(TicketHistory.class);
-        verify(f.ticketHistoryRepository,times(1)).save(histCaptor.capture());
-        TicketHistory history=histCaptor.getValue();
+        verify(ticketHistoryRepository, times(1)).save(histCaptor.capture());
+        TicketHistory history = histCaptor.getValue();
         assertThat(history.ticketId()).isEqualTo(100L);
         assertThat(history.action()).isEqualTo(TicketHistoryAction.CREATED);
         assertThat(history.oldStatus()).isNull();
@@ -88,107 +77,111 @@ public class TicketServiceTest {
         assertThat(history.changedByUserId()).isEqualTo(42L);
         assertThat(history.changedAt()).isNotNull();
 
-        ArgumentCaptor<TicketCreatedEvent> eCaptor=ArgumentCaptor.forClass(TicketCreatedEvent.class);
-        verify(f.eventPublisher,times(1)).publish(eCaptor.capture());
-        TicketCreatedEvent evt=eCaptor.getValue();
+        ArgumentCaptor<TicketCreatedEvent> eCaptor = ArgumentCaptor.forClass(TicketCreatedEvent.class);
+        verify(eventPublisher, times(1)).publish(eCaptor.capture());
+        TicketCreatedEvent evt = eCaptor.getValue();
 
         assertThat(evt.ticketId()).isEqualTo(100L);
         assertThat(evt.createdByUserId()).isEqualTo(42L);
         assertThat(evt.createdAt()).isNotNull();
     }
 
- static void changeStatus_userCannotChangeOthers_throwsForbidden(){
-        Fixture f=new Fixture();
-        Ticket existing = new Ticket(10L,"t","d",TicketStatus.OPEN, Instant.now(),999L);
-        when(f.ticketRepository.findById(10L)).thenReturn(Optional.of(existing));
-        when(f.currentUser.currentUserId()).thenReturn(42L);
-        when(f.currentUser.currentUserRole()).thenReturn(Role.USER);
+    @Test
+    public void changeStatus_userCannotChangeOthers_throwsForbidden() {
 
-        assertThatThrownBy(()->f.service.changeStatus(10L,TicketStatus.IN_PROGRESS))
-            .isInstanceOf(TicketService.ForbiddenException.class)
-            .hasMessageContaining("only update your own tickets");
+        Ticket existing = new Ticket(10L, "t", "d", TicketStatus.OPEN, Instant.now(), 999L);
+        when(ticketRepository.findById(10L)).thenReturn(Optional.of(existing));
+        when(currentUser.currentUserId()).thenReturn(42L);
+        when(currentUser.currentUserRole()).thenReturn(Role.USER);
 
-        verify(f.ticketRepository,never()).save(any());
-        verify(f.ticketHistoryRepository,never()).save(any());
- }
- static void changeStatus_userCanChange(){
-        Fixture f=new Fixture();
-        Ticket existing =new Ticket(10L,"t","d",TicketStatus.OPEN,Instant.now(),42L);
-        when(f.ticketRepository.findById(10L)).thenReturn(Optional.of(existing));
-        when(f.currentUser.currentUserId()).thenReturn(42L);
-        when(f.currentUser.currentUserRole()).thenReturn(Role.USER);
+        assertThatThrownBy(() -> service.changeStatus(10L, TicketStatus.IN_PROGRESS))
+                .isInstanceOf(TicketService.ForbiddenException.class)
+                .hasMessageContaining("only update your own tickets");
 
-        when(f.ticketRepository.save(any(Ticket.class))).thenAnswer(inv->inv.getArgument(0));
+        verify(ticketRepository, never()).save(any());
+        verify(ticketHistoryRepository, never()).save(any());
+    }
 
-        Ticket saved=f.service.changeStatus(10L,TicketStatus.IN_PROGRESS);
+    @Test
+    public void changeStatus_userCanChange() {
+        Ticket existing = new Ticket(10L, "t", "d", TicketStatus.OPEN, Instant.now(), 42L);
+        when(ticketRepository.findById(10L)).thenReturn(Optional.of(existing));
+        when(currentUser.currentUserId()).thenReturn(42L);
+        when(currentUser.currentUserRole()).thenReturn(Role.USER);
+
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Ticket saved = service.changeStatus(10L, TicketStatus.IN_PROGRESS);
 
         assertThat(saved.id()).isEqualTo(10L);
         assertThat(saved.status()).isEqualTo(TicketStatus.IN_PROGRESS);
         assertThat(saved.createdByUserId()).isEqualTo(42L);
 
-        ArgumentCaptor<Ticket> captor=ArgumentCaptor.forClass(Ticket.class);
-        verify(f.ticketRepository).save(captor.capture());
-        Ticket updatedSentToRepo=captor.getValue();
+        ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
+        verify(ticketRepository).save(captor.capture());
+        Ticket updatedSentToRepo = captor.getValue();
 
         assertThat(updatedSentToRepo.id()).isEqualTo(10L);
         assertThat(updatedSentToRepo.status()).isEqualTo(TicketStatus.IN_PROGRESS);
 
         //TicketHistory
-     ArgumentCaptor<TicketHistory> hcaptor=ArgumentCaptor.forClass(TicketHistory.class);
-     verify(f.ticketHistoryRepository).save(hcaptor.capture());
-     TicketHistory history=hcaptor.getValue();
+        ArgumentCaptor<TicketHistory> hcaptor = ArgumentCaptor.forClass(TicketHistory.class);
+        verify(ticketHistoryRepository).save(hcaptor.capture());
+        TicketHistory history = hcaptor.getValue();
 
-     assertThat(history.ticketId()).isEqualTo(10L);
-     assertThat(history.action()).isEqualTo(TicketHistoryAction.STATUS_CHANGED);
-     assertThat(history.oldStatus()).isEqualTo(TicketStatus.OPEN);
-     assertThat(history.newStatus()).isEqualTo(TicketStatus.IN_PROGRESS);
-     assertThat(history.changedByUserId()).isEqualTo(42L);
-     assertThat(history.changedAt()).isNotNull();
+        assertThat(history.ticketId()).isEqualTo(10L);
+        assertThat(history.action()).isEqualTo(TicketHistoryAction.STATUS_CHANGED);
+        assertThat(history.oldStatus()).isEqualTo(TicketStatus.OPEN);
+        assertThat(history.newStatus()).isEqualTo(TicketStatus.IN_PROGRESS);
+        assertThat(history.changedByUserId()).isEqualTo(42L);
+        assertThat(history.changedAt()).isNotNull();
 
- }
- static void changeStatus_adminCanChangeany(){
-        Fixture f=new Fixture();
+    }
 
-        Ticket existing=new Ticket(10L,"t","d",TicketStatus.OPEN,Instant.now(),42L);
-        when(f.currentUser.currentUserId()).thenReturn(100L);
-        when(f.ticketRepository.findById(10L)).thenReturn(Optional.of(existing));
-        when(f.currentUser.currentUserRole()).thenReturn(Role.ADMIN);
+    @Test
+    public void changeStatus_adminCanChangeany() {
 
-        when(f.ticketRepository.save(any(Ticket.class))).thenAnswer(inv->inv.getArgument(0));
+        Ticket existing = new Ticket(10L, "t", "d", TicketStatus.OPEN, Instant.now(), 42L);
+        when(currentUser.currentUserId()).thenReturn(100L);
+        when(ticketRepository.findById(10L)).thenReturn(Optional.of(existing));
+        when(currentUser.currentUserRole()).thenReturn(Role.ADMIN);
 
-        Ticket saved=f.service.changeStatus(10L,TicketStatus.IN_PROGRESS);
+        when(ticketRepository.save(any(Ticket.class))).thenAnswer(inv -> inv.getArgument(0));
 
-     assertThat(saved.id()).isEqualTo(10L);
-     assertThat(saved.status()).isEqualTo(TicketStatus.IN_PROGRESS);
-     assertThat(saved.createdByUserId()).isEqualTo(42L);
+        Ticket saved = service.changeStatus(10L, TicketStatus.IN_PROGRESS);
 
-     ArgumentCaptor<Ticket> captor=ArgumentCaptor.forClass(Ticket.class);
-     verify(f.ticketRepository).save(captor.capture());
-     Ticket updatedSentToRepo=captor.getValue();
-     assertThat(updatedSentToRepo.id()).isEqualTo(10L);
-     assertThat(updatedSentToRepo.status()).isEqualTo(TicketStatus.IN_PROGRESS);
+        assertThat(saved.id()).isEqualTo(10L);
+        assertThat(saved.status()).isEqualTo(TicketStatus.IN_PROGRESS);
+        assertThat(saved.createdByUserId()).isEqualTo(42L);
 
-     ArgumentCaptor<TicketHistory> hcaptor=ArgumentCaptor.forClass(TicketHistory.class);
-     verify(f.ticketHistoryRepository).save(hcaptor.capture());
-     TicketHistory history=hcaptor.getValue();
+        ArgumentCaptor<Ticket> captor = ArgumentCaptor.forClass(Ticket.class);
+        verify(ticketRepository).save(captor.capture());
+        Ticket updatedSentToRepo = captor.getValue();
+        assertThat(updatedSentToRepo.id()).isEqualTo(10L);
+        assertThat(updatedSentToRepo.status()).isEqualTo(TicketStatus.IN_PROGRESS);
 
-     assertThat(history.ticketId()).isEqualTo(10L);
-     assertThat(history.action()).isEqualTo(TicketHistoryAction.STATUS_CHANGED);
-     assertThat(history.oldStatus()).isEqualTo(TicketStatus.OPEN);
-     assertThat(history.newStatus()).isEqualTo(TicketStatus.IN_PROGRESS);
-     assertThat(history.changedByUserId()).isEqualTo(100L);
-     assertThat(history.changedAt()).isNotNull();
- }
-    static void changeStatus_ticketNotFound_throws_andDoesNotSaveAnything() {
-        Fixture f = new Fixture();
+        ArgumentCaptor<TicketHistory> hcaptor = ArgumentCaptor.forClass(TicketHistory.class);
+        verify(ticketHistoryRepository).save(hcaptor.capture());
+        TicketHistory history = hcaptor.getValue();
 
-        when(f.ticketRepository.findById(10L)).thenReturn(Optional.empty());
+        assertThat(history.ticketId()).isEqualTo(10L);
+        assertThat(history.action()).isEqualTo(TicketHistoryAction.STATUS_CHANGED);
+        assertThat(history.oldStatus()).isEqualTo(TicketStatus.OPEN);
+        assertThat(history.newStatus()).isEqualTo(TicketStatus.IN_PROGRESS);
+        assertThat(history.changedByUserId()).isEqualTo(100L);
+        assertThat(history.changedAt()).isNotNull();
+    }
 
-        assertThatThrownBy(() -> f.service.changeStatus(10L, TicketStatus.IN_PROGRESS))
-            .isInstanceOf(NullPointerException.class)
-            .hasMessageContaining("Ticket not found");
+    @Test
+    public void changeStatus_ticketNotFound_throws_andDoesNotSaveAnything() {
 
-        verify(f.ticketRepository, never()).save(any());
-        verify(f.ticketHistoryRepository, never()).save(any());
+        when(ticketRepository.findById(10L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.changeStatus(10L, TicketStatus.IN_PROGRESS))
+                .isInstanceOf(NullPointerException.class)
+                .hasMessageContaining("Ticket not found");
+
+        verify(ticketRepository, never()).save(any());
+        verify(ticketHistoryRepository, never()).save(any());
     }
 }

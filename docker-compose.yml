@@ -12,9 +12,9 @@ services:
     volumes:
       - ttracker_mysql_data:/var/lib/mysql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpass"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-prootpass" ]
       interval: 5s
       timeout: 3s
       retries: 20
 volumes:
-   ttracker_mysql_data: {}
+  ttracker_mysql_data: { }

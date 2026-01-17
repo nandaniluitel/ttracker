@@ -12,7 +12,8 @@ public class SpringEventPublisherAdapter implements EventPublisherPort {
         this.publisher = publisher;
     }
 
-    @Override public void publish(Object event) {
+    @Override
+    public void publish(Object event) {
         publisher.publishEvent(event);
     }
 }

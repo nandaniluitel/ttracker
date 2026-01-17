@@ -23,20 +23,34 @@ public class AuthController {
     public AuthController(AuthUseCases auth) {
         this.auth = auth;
     }
-    public record RegisterRequest(@Email @NotBlank String email,@NotBlank String password){};
-    public record RegisterResponse(Long id, String email, String role){};
+
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest req){
+    public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest req) {
         User u = auth.register(new RegisterCommand(req.email, req.password()));
         return ResponseEntity.ok(new RegisterResponse(u.id(), u.email(), u.role().name()));
     }
-    public record LoginRequest(@Email @NotBlank String email, @NotBlank String password){};
+
+    ;
+
     @PostMapping("/login")
-     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest req){
-         AuthResponse token= auth.login(new LoginCommand(req.email(), req.password()));
-         return ResponseEntity.ok(token);
-     }
-     }
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest req) {
+        AuthResponse token = auth.login(new LoginCommand(req.email(), req.password()));
+        return ResponseEntity.ok(token);
+    }
+
+    ;
+
+    public record RegisterRequest(@Email @NotBlank String email, @NotBlank String password) {
+    }
+
+    public record RegisterResponse(Long id, String email, String role) {
+    }
+
+    ;
+
+    public record LoginRequest(@Email @NotBlank String email, @NotBlank String password) {
+    }
+}
 
 
 

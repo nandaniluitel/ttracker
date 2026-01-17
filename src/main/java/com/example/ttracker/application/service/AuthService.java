@@ -7,7 +7,6 @@ import com.example.ttracker.application.port.in.RegisterCommand;
 import com.example.ttracker.application.port.out.PasswordHashPort;
 import com.example.ttracker.application.port.out.TokenPort;
 import com.example.ttracker.application.port.out.UserRepositoryPort;
-
 import com.example.ttracker.domain.model.Role;
 import com.example.ttracker.domain.model.User;
 import org.springframework.stereotype.Service;
@@ -28,15 +27,15 @@ public class AuthService implements AuthUseCases {
 
     @Override
     public User register(RegisterCommand command) {
-      String email=command.email().trim().toLowerCase();
+        String email = command.email().trim().toLowerCase();
 
-      userRepository.findByEmail(email).ifPresent(u->{
-          throw new IllegalArgumentException("Email already registered");
-      });
-      Role role=Role.USER;
+        userRepository.findByEmail(email).ifPresent(u -> {
+            throw new IllegalArgumentException("Email already registered");
+        });
+        Role role = Role.USER;
 
-      User userToSave = new User(null,email,passwordHash.hash(command.password()),role, Instant.now());
-      return userRepository.save(userToSave);
+        User userToSave = new User(null, email, passwordHash.hash(command.password()), role, Instant.now());
+        return userRepository.save(userToSave);
 
     }
 
@@ -45,12 +44,12 @@ public class AuthService implements AuthUseCases {
     public AuthResponse login(LoginCommand loginCommand) {
         String email = loginCommand.email().trim().toLowerCase();
         User user = userRepository.findByEmail(email)
-            .orElseThrow(()->new IllegalArgumentException("Invalid credentials"));
+                .orElseThrow(() -> new IllegalArgumentException("Invalid credentials"));
 
-        if(!passwordHash.matches(loginCommand.password(),user.passwordHash())){
+        if (!passwordHash.matches(loginCommand.password(), user.passwordHash())) {
             throw new IllegalArgumentException("Invalid credentials");
         }
-        String token = tokenPort.generateToken(user.id(),user.email(),user.role());
+        String token = tokenPort.generateToken(user.id(), user.email(), user.role());
         return new AuthResponse(token);
     }
 }

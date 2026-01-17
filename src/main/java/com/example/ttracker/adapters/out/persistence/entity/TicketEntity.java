@@ -3,12 +3,14 @@ package com.example.ttracker.adapters.out.persistence.entity;
 import com.example.ttracker.domain.model.Ticket;
 import com.example.ttracker.domain.model.TicketStatus;
 import jakarta.persistence.*;
+
 import java.time.Instant;
 
 @Entity
-@Table(name="tickets")
+@Table(name = "tickets")
 public class TicketEntity {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String title;
@@ -24,13 +26,17 @@ public class TicketEntity {
     public TicketEntity() {
     }
 
-    public TicketEntity(Long id,String title, String description, String status, Instant createdAt, Long createdByUserId) {
+    public TicketEntity(Long id, String title, String description, String status, Instant createdAt, Long createdByUserId) {
         this.id = id;
-        this.title=title;
+        this.title = title;
         this.description = description;
         this.status = status;
         this.createdAt = createdAt;
         this.createdByUserId = createdByUserId;
+    }
+
+    public static TicketEntity from(Ticket ticket) {
+        return new TicketEntity(ticket.id(), ticket.title(), ticket.description(), ticket.status().name(), ticket.createdAt(), ticket.createdByUserId());
     }
 
     public Long getId() {
@@ -81,12 +87,8 @@ public class TicketEntity {
         this.createdByUserId = createdByUserId;
     }
 
-    public static TicketEntity from(Ticket ticket)
-    {
-        return new TicketEntity(ticket.id(),ticket.title(),ticket.description(),ticket.status().name(),ticket.createdAt(),ticket.createdByUserId());
-    }
-    public Ticket toDomain(){
-        return new Ticket(this.getId(),this.getTitle(),this.getDescription(),
-            TicketStatus.valueOf(this.getStatus()),this.getCreatedAt(),this.getCreatedByUserId());
+    public Ticket toDomain() {
+        return new Ticket(this.getId(), this.getTitle(), this.getDescription(),
+                TicketStatus.valueOf(this.getStatus()), this.getCreatedAt(), this.getCreatedByUserId());
     }
 }

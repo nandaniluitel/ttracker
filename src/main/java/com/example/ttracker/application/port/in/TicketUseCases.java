@@ -7,7 +7,10 @@ import java.util.List;
 
 public interface TicketUseCases {
     Ticket create(CreateTicketCommand command);
+
     Ticket getById(Long id);
+
     List<Ticket> list();
+
     Ticket changeStatus(Long ticketId, TicketStatus newStatus);
 }
