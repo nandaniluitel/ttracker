@@ -1,13 +1,14 @@
 package com.example.ttracker.application.service;
 
-import com.example.ttracker.application.port.in.tickets.CreateTicketCommand;
-import com.example.ttracker.application.port.out.CurrentUserPort;
-import com.example.ttracker.application.port.out.EventPublisherPort;
-import com.example.ttracker.application.port.out.SprintRepositoryPort;
-import com.example.ttracker.application.port.out.TicketHistoryRepositoryPort;
-import com.example.ttracker.application.port.out.TicketRepositoryPort;
-import com.example.ttracker.domain.event.TicketCreatedEvent;
-import com.example.ttracker.domain.model.*;
+import com.example.ttracker.security.domain.model.*;
+import com.example.ttracker.ticket.application.TicketService;
+import com.example.ttracker.ticket.domain.CreateTicketCommand;
+import com.example.ttracker.security.application.port.out.CurrentUserPort;
+import com.example.ttracker.ticket.adapter.out.events.EventPublisherPort;
+import com.example.ttracker.sprint.adapter.out.persistence.SprintRepositoryPort;
+import com.example.ttracker.ticket.adapter.out.persistence.TicketHistoryRepositoryPort;
+import com.example.ttracker.ticket.adapter.out.persistence.TicketRepositoryPort;
+import com.example.ttracker.security.domain.event.TicketCreatedEvent;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 

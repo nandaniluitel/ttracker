@@ -1,5 +1,6 @@
 package com.example.ttracker.application.port.in.epics;
-import com.example.ttracker.domain.model.Priority;
+import com.example.ttracker.security.domain.model.Priority;
+import com.example.ttracker.epic.domain.CreateEpicCommand;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
