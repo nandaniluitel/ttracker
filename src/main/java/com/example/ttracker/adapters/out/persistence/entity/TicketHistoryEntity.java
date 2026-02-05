@@ -17,14 +17,17 @@ public class TicketHistoryEntity {
     @Column(name = "ticket_id", nullable = false)
     private Long ticketId;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String action;
+    private TicketHistoryAction action;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "old_status")
-    private String oldStatus;
+    private TicketStatus oldStatus;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "new_status")
-    private String newStatus;
+    private TicketStatus newStatus;
 
     @Column(name = "changed_at", nullable = false)
     private Instant changedAt;
@@ -32,9 +35,8 @@ public class TicketHistoryEntity {
     @Column(name = "changed_by_user_id", nullable = false)
     private Long changedByUserId;
 
-    public TicketHistoryEntity(Long id, Long ticketId, String action, String oldStatus, String newStatus,
-                               Instant changedAt,
-                               Long changedByUserId) {
+    public TicketHistoryEntity(Long id, Long ticketId, TicketHistoryAction action, TicketStatus oldStatus,
+        TicketStatus newStatus, Instant changedAt, Long changedByUserId) {
         this.id = id;
         this.ticketId = ticketId;
         this.action = action;
@@ -51,9 +53,9 @@ public class TicketHistoryEntity {
         return new TicketHistoryEntity(
                 ticketHistory.id(),
                 ticketHistory.ticketId(),
-                ticketHistory.action().name(),
-                ticketHistory.oldStatus() == null ? null : ticketHistory.oldStatus().name(),
-                ticketHistory.newStatus() == null ? null : ticketHistory.newStatus().name(),
+                ticketHistory.action(),
+                ticketHistory.oldStatus() == null ? null : ticketHistory.oldStatus(),
+                ticketHistory.newStatus() == null ? null : ticketHistory.newStatus(),
                 ticketHistory.changedAt(),
                 ticketHistory.changedByUserId());
     }
@@ -74,27 +76,27 @@ public class TicketHistoryEntity {
         this.ticketId = ticketId;
     }
 
-    public String getAction() {
+    public TicketHistoryAction getAction() {
         return action;
     }
 
-    public void setAction(String action) {
+    public void setAction(TicketHistoryAction action) {
         this.action = action;
     }
 
-    public String getOldStatus() {
+    public TicketStatus getOldStatus() {
         return oldStatus;
     }
 
-    public void setOldStatus(String oldStatus) {
+    public void setOldStatus(TicketStatus oldStatus) {
         this.oldStatus = oldStatus;
     }
 
-    public String getNewStatus() {
+    public TicketStatus getNewStatus() {
         return newStatus;
     }
 
-    public void setNewStatus(String newStatus) {
+    public void setNewStatus(TicketStatus newStatus) {
         this.newStatus = newStatus;
     }
 
@@ -118,9 +120,9 @@ public class TicketHistoryEntity {
         return new TicketHistory(
                 this.getId(),
                 this.getTicketId(),
-                TicketHistoryAction.valueOf(this.getAction()),
-                this.getOldStatus() == null ? null : TicketStatus.valueOf(this.getOldStatus()),
-                this.getNewStatus() == null ? null : TicketStatus.valueOf(this.getNewStatus()),
+                this.getAction(),
+                this.getOldStatus() == null ? null : this.getOldStatus(),
+                this.getNewStatus() == null ? null : this.getNewStatus(),
                 this.getChangedAt(),
                 this.getChangedByUserId());
     }

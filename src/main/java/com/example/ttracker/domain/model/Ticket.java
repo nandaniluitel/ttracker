@@ -7,7 +7,15 @@ public record Ticket(
         String title,
         String description,
         TicketStatus status,
+        Priority priority,
+        Integer storyPoints,
+        Long assigneeUserId,
+        Long epicId,
+        Long sprintId,
+        Long createdByUserId,
+        Long editedByUserId,
         Instant createdAt,
-        Long createdByUserId
+        Instant updatedAt
 ) {
+
 }

@@ -39,7 +39,7 @@ class TicketHistoryPersistenceAdapterTest extends MySqlTestcontainerBase {
     void save_should_persist_ticketHistory_and_be_queryable_via_jdbc(){
         //given
         Instant now= Instant.now();
-        TicketHistory ticketHistory=new TicketHistory(null,99L,TicketHistoryAction.CREATED,null,TicketStatus.OPEN,now,1L);
+        TicketHistory ticketHistory=new TicketHistory(null,99L,TicketHistoryAction.CREATED,null,TicketStatus.BACKLOG,now,1L);
         //act
         TicketHistory saved=ticketHistoryPersistenceAdapter.save(ticketHistory);
         //assert
@@ -54,7 +54,7 @@ class TicketHistoryPersistenceAdapterTest extends MySqlTestcontainerBase {
         assertEquals(99L,dbTicketHistory.ticketId());
         assertEquals(TicketHistoryAction.CREATED,dbTicketHistory.action());
         assertNull(dbTicketHistory.oldStatus());
-        assertEquals(TicketStatus.OPEN,dbTicketHistory.newStatus());
+        assertEquals(TicketStatus.BACKLOG,dbTicketHistory.newStatus());
         assertNotNull(dbTicketHistory.changedAt());
         assertEquals(1L,dbTicketHistory.changedByUserId());
 

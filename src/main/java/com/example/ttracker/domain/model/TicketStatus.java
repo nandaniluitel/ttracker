@@ -1,7 +1,10 @@
 package com.example.ttracker.domain.model;
 
 public enum TicketStatus {
-    OPEN,
+
+    BACKLOG,
+    TODO,
     IN_PROGRESS,
-    RESOLVED
+    IN_REVIEW,
+    DONE
 }

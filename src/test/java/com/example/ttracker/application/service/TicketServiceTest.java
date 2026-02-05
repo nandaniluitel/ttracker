@@ -1,8 +1,9 @@
 package com.example.ttracker.application.service;
 
-import com.example.ttracker.application.port.in.CreateTicketCommand;
+import com.example.ttracker.application.port.in.tickets.CreateTicketCommand;
 import com.example.ttracker.application.port.out.CurrentUserPort;
 import com.example.ttracker.application.port.out.EventPublisherPort;
+import com.example.ttracker.application.port.out.SprintRepositoryPort;
 import com.example.ttracker.application.port.out.TicketHistoryRepositoryPort;
 import com.example.ttracker.application.port.out.TicketRepositoryPort;
 import com.example.ttracker.domain.event.TicketCreatedEvent;
@@ -24,12 +25,13 @@ public class TicketServiceTest {
     private final TicketHistoryRepositoryPort ticketHistoryRepository = mock(TicketHistoryRepositoryPort.class);
     private final CurrentUserPort currentUser = mock(CurrentUserPort.class);
     private final EventPublisherPort eventPublisher = mock(EventPublisherPort.class);
+    private final SprintRepositoryPort sprintRepository=mock(SprintRepositoryPort.class);
     private final TicketService service = new TicketService(
             ticketRepository,
             ticketHistoryRepository,
             currentUser,
-            eventPublisher
-    );
+            eventPublisher,
+        sprintRepository);
 
 
     @Test

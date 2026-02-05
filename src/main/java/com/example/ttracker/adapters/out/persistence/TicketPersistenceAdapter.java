@@ -2,6 +2,7 @@ package com.example.ttracker.adapters.out.persistence;
 
 import com.example.ttracker.adapters.out.persistence.entity.TicketEntity;
 import com.example.ttracker.adapters.out.persistence.repo.JpaTicketRepository;
+import com.example.ttracker.application.port.in.tickets.TicketFilter;
 import com.example.ttracker.application.port.out.TicketRepositoryPort;
 import com.example.ttracker.domain.model.Ticket;
 import org.springframework.stereotype.Component;
@@ -28,9 +29,26 @@ public class TicketPersistenceAdapter implements TicketRepositoryPort {
         return jpa.findById(id).map(TicketEntity::toDomain);
     }
 
+
+    @Override public void deleteById(Long id) {
+        jpa.deleteById(id);
+    }
+
+
+    @Override public void clearEpicForTickets(Long epicId) {
+        jpa.clearEpicForTickets(epicId);
+    }
+
+    @Override public boolean existsBySprintId(Long id) {
+        return jpa.existBySprintId(id);
+    }
+
     @Override
-    public List<Ticket> findAll() {
-        return jpa.findAll().stream().map(TicketEntity::toDomain).toList();
+    public List<Ticket> findAll(TicketFilter filter) {
+        if (filter == null) {
+            return jpa.findAll().stream().map(TicketEntity::toDomain).toList();
+        }
+        return jpa.search(filter.sprintId(), filter.epicId(),filter.assigneeUserId(),filter.status(),filter.priority()).stream().map(TicketEntity::toDomain).toList();
     }
 
 }
