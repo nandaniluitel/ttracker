@@ -1,13 +1,10 @@
 package com.example.ttracker.adapters.out.persistence;
 
 import com.example.ttracker.application.service.MySqlTestcontainerBase;
-import com.example.ttracker.domain.model.Role;
-import com.example.ttracker.domain.model.Ticket;
-import com.example.ttracker.domain.model.TicketHistory;
-import com.example.ttracker.domain.model.TicketHistoryAction;
-import com.example.ttracker.domain.model.TicketStatus;
-import com.example.ttracker.domain.model.User;
-import java.sql.Timestamp;
+import com.example.ttracker.security.adapters.out.persistence.UserPersistenceAdapter;
+import com.example.ttracker.security.domain.model.Role;
+import com.example.ttracker.security.domain.model.User;
+
 import java.time.Instant;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

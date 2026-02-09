@@ -1,9 +1,9 @@
 package com.example.ttracker.application.service;
 
-import com.example.ttracker.adapters.out.events.TicketCreatedListener;
-import com.example.ttracker.application.port.out.NotificationRepositoryPort;
-import com.example.ttracker.domain.event.TicketCreatedEvent;
-import com.example.ttracker.domain.model.Notification;
+import com.example.ttracker.ticket.adapter.out.events.TicketCreatedListener;
+import com.example.ttracker.ticket.adapter.out.persistence.NotificationRepositoryPort;
+import com.example.ttracker.security.domain.event.TicketCreatedEvent;
+import com.example.ttracker.security.domain.model.Notification;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 

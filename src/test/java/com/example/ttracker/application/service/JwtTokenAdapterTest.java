@@ -1,7 +1,7 @@
 package com.example.ttracker.application.service;
 
-import com.example.ttracker.adapters.in.JwtTokenAdapter;
-import com.example.ttracker.domain.model.Role;
+import com.example.ttracker.security.adapters.in.JwtTokenAdapter;
+import com.example.ttracker.security.domain.model.Role;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 

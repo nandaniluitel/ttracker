@@ -1,13 +1,15 @@
 package com.example.ttracker.adapters.out.persistence;
 
-import com.example.ttracker.application.port.in.tickets.TicketFilter;
+import com.example.ttracker.ticket.domain.TicketFilter;
 import com.example.ttracker.application.service.MySqlTestcontainerBase;
-import com.example.ttracker.domain.model.Priority;
-import com.example.ttracker.domain.model.Ticket;
+import com.example.ttracker.security.domain.model.Priority;
+import com.example.ttracker.security.domain.model.Ticket;
 
-import com.example.ttracker.domain.model.TicketStatus;
+import com.example.ttracker.security.domain.model.TicketStatus;
 import java.sql.Timestamp;
 import java.time.Instant;
+
+import com.example.ttracker.ticket.adapter.out.persistence.TicketPersistenceAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

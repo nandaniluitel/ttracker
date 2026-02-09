@@ -1,13 +1,14 @@
 package com.example.ttracker.application.service;
 
-import com.example.ttracker.application.port.in.AuthResponse;
-import com.example.ttracker.application.port.in.LoginCommand;
-import com.example.ttracker.application.port.in.RegisterCommand;
-import com.example.ttracker.application.port.out.PasswordHashPort;
-import com.example.ttracker.application.port.out.TokenPort;
-import com.example.ttracker.application.port.out.UserRepositoryPort;
-import com.example.ttracker.domain.model.Role;
-import com.example.ttracker.domain.model.User;
+import com.example.ttracker.security.application.port.in.AuthResponse;
+import com.example.ttracker.security.application.port.in.LoginCommand;
+import com.example.ttracker.security.application.port.in.RegisterCommand;
+import com.example.ttracker.security.application.port.out.PasswordHashPort;
+import com.example.ttracker.security.application.port.out.TokenPort;
+import com.example.ttracker.security.application.port.out.UserRepositoryPort;
+import com.example.ttracker.security.application.service.AuthService;
+import com.example.ttracker.security.domain.model.Role;
+import com.example.ttracker.security.domain.model.User;
 import org.mockito.ArgumentCaptor;
 
 import java.time.Instant;
