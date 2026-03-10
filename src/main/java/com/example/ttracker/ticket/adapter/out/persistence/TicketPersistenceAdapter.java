@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class TicketPersistenceAdapter implements TicketRepositoryPort {
@@ -31,13 +32,13 @@ public class TicketPersistenceAdapter implements TicketRepositoryPort {
         jpa.deleteById(id);
     }
 
-
+    @Transactional
     @Override public void clearEpicForTickets(Long epicId) {
         jpa.clearEpicForTickets(epicId);
     }
 
     @Override public boolean existsBySprintId(Long id) {
-        return jpa.existBySprintId(id);
+        return jpa.existsBySprintId(id);
     }
 
     @Override

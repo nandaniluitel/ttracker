@@ -20,9 +20,7 @@ public record CreateEpicCommand(
         if (priority == null) {
             throw new IllegalArgumentException("Epic priority must not be null");
         }
-        if (assigneeUserId == null) {
-            throw new IllegalArgumentException("Assignee user ID can't be null");
-        }
+
      }
 
 }

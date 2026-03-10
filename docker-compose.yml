@@ -2,13 +2,13 @@ services:
   mysql:
     image: mysql:8.0
     container_name: ttracker-mysql
-    ports:
-      - "3307:3306"
     environment:
       MYSQL_DATABASE: ttracker
       MYSQL_USER: nandani
       MYSQL_PASSWORD: "212002"
       MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3307:3306"
     volumes:
       - ttracker_mysql_data:/var/lib/mysql
     healthcheck:

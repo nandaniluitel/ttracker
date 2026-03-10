@@ -2,9 +2,12 @@ package com.example.ttracker.sprint.application;
 
 import com.example.ttracker.security.application.port.out.CurrentUserPort;
 import com.example.ttracker.security.domain.model.Sprint;
+import com.example.ttracker.security.domain.model.Ticket;
 import com.example.ttracker.sprint.adapter.out.persistence.SprintRepositoryPort;
 import com.example.ttracker.sprint.domain.CreateSprintCommand;
 import com.example.ttracker.sprint.domain.UpdateSprintCommand;
+import com.example.ttracker.ticket.application.TicketUseCases;
+import com.example.ttracker.ticket.domain.TicketFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +24,12 @@ public class SprintService implements SprintUseCases {
 
     private final CurrentUserPort currentUser;
     private final SprintRepositoryPort sprintRepository;
+    private final TicketUseCases tickets;
 
-    public SprintService(CurrentUserPort currentUser, SprintRepositoryPort sprintRepository) {
+    public SprintService(CurrentUserPort currentUser, SprintRepositoryPort sprintRepository, TicketUseCases tickets) {
         this.currentUser = currentUser;
         this.sprintRepository = sprintRepository;
+        this.tickets = tickets;
     }
 
     @Override
@@ -54,6 +59,9 @@ public class SprintService implements SprintUseCases {
         return sprintRepository.save(sprint);
     }
 
+    @Override public Boolean existById(Long id) {
+        return sprintRepository.existsById(id);
+    }
 
     @Override
     public Sprint getById(Long id) {
@@ -115,7 +123,7 @@ public class SprintService implements SprintUseCases {
         }
 
         // Option A: reject if tickets exist
-        if (sprintRepository.hasTickets(sprintId)) {
+        if (hasTickets(sprintId)) {
             throw new ConflictException("Sprint has tickets; move them to Backlog before deleting");
         }
 
@@ -125,6 +133,20 @@ public class SprintService implements SprintUseCases {
     @Override
     public Long getBacklogSprintId() {
         return sprintRepository.findByTitle("Backlog").map(Sprint::id).orElseThrow(() -> new IllegalStateException("Backlog sprint missing"));
+    }
+
+    @Override public Boolean hasTickets(Long sprintId) {
+        return tickets.existBySprintId(sprintId);
+
+    }
+    public List<Ticket> listTickets(Long sprintId ){
+        return tickets.list(new TicketFilter(
+            sprintId, // sprintId
+            null,     // epicId
+            null,     // assigneeUserId
+            null,     // status
+            null      // priority
+        ));
     }
 
     private boolean isBacklog(Sprint sprint) {

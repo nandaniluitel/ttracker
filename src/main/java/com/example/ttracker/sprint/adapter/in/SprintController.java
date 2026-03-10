@@ -5,12 +5,14 @@ import com.example.ttracker.sprint.domain.CreateSprintCommand;
 import com.example.ttracker.sprint.domain.UpdateSprintCommand;
 import com.example.ttracker.security.domain.model.Sprint;
 import com.example.ttracker.security.domain.model.SprintStatus;
+import com.example.ttracker.ticket.adapter.in.TicketController;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,6 +74,13 @@ public class SprintController {
     @PreAuthorize("hasRole('SCRUM_MASTER') or hasRole('ADMIN')")
     public void delete(@PathVariable Long id) {
         sprints.delete(id);
+    }
+
+    @GetMapping("/tickets/{id}")
+    public ResponseEntity<List<TicketController.TicketResponse>> listTicketsInSprint(@PathVariable Long id){
+        sprints.existById(id);
+        var tickets=sprints.listTickets(id);
+        return ResponseEntity.ok(tickets.stream().map(TicketController.TicketResponse::from).toList());
     }
 
 

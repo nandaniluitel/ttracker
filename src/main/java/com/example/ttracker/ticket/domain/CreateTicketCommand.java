@@ -12,4 +12,12 @@ public record CreateTicketCommand(
     Long sprintId//nullable ->default Backlog in service
 
     ) {
+    public CreateTicketCommand{
+        if (title == null || title.isBlank()) {
+            throw new IllegalArgumentException("Ticket title must not be null or blank");
+        }
+        if (description == null || description.isBlank()) {
+            throw new IllegalArgumentException("Ticket description must not be null or blank");
+        }
+    }
 }

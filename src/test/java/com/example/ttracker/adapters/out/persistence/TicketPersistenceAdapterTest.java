@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -125,7 +126,7 @@ class TicketPersistenceAdapterTest extends MySqlTestcontainerBase {
         //assert
         assertNotNull(saved.id());
         Ticket dbTicket=template.queryForObject(
-            "SELECT id,title,description,status,priority,story_points,assignee_user_id,epic_id,sprint_id,created_by_user_id,edited_by_user_id,created_at,updated_at" + "FROM tickets WHERE id=?",
+            "SELECT id,title,description,status,priority,story_points,assignee_user_id,epic_id,sprint_id,created_by_user_id,edited_by_user_id,created_at,updated_at" + " FROM tickets WHERE id=?",
             TICKET_ROW_MAPPER,
             saved.id()
         );
@@ -183,7 +184,7 @@ class TicketPersistenceAdapterTest extends MySqlTestcontainerBase {
     void findAll_and_be_queryable_via_jdbc() {
         template.update(
             "INSERT INTO tickets (id,title,description,status,priority,story_points,assignee_user_id,epic_id,sprint_id,created_by_user_id,edited_by_user_id,created_at,updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)",
+                "VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?,?)",
             1L,
             "T1",
             "D1",
@@ -200,7 +201,7 @@ class TicketPersistenceAdapterTest extends MySqlTestcontainerBase {
         );
         template.update(
             "INSERT INTO tickets (id,title,description,status,priority,story_points,assignee_user_id,epic_id,sprint_id,created_by_user_id,edited_by_user_id,created_at,updated_at) " +
-                "VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?)",
+                "VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?,?)",
             2L,
             "T2",
             "D2",
@@ -246,6 +247,7 @@ class TicketPersistenceAdapterTest extends MySqlTestcontainerBase {
     }
 
     @Test
+
     void clearEpicForTickets_should_set_epic_id_to_null_for_all_matching_tickets(){
         template.update("INSERT INTO tickets(id, title, description,status,priority,story_points,assignee_user_id,epic_id,sprint_id,created_by_user_id,edited_by_user_id,created_at,updated_at)" + "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             201L, "T201", "D201", "BACKLOG", "LOW", 1, 2L, 1L, 1L, 1L, null, Timestamp.from(Instant.now()), null);
@@ -258,7 +260,8 @@ class TicketPersistenceAdapterTest extends MySqlTestcontainerBase {
             Integer.class
         );
         assertEquals(2, before);
-        Integer after=template.queryForObject("SELECT COUNT(*) FROM tickets WHERE epic_1=1", Integer.class);
+        ticketPersistenceAdapter.clearEpicForTickets(1L);
+        Integer after=template.queryForObject("SELECT COUNT(*) FROM tickets WHERE epic_id=1", Integer.class);
         assertEquals(0,after);
         Integer nullCount = template.queryForObject(
             "SELECT COUNT(*) FROM tickets WHERE id IN (201,202) AND epic_id IS NULL",

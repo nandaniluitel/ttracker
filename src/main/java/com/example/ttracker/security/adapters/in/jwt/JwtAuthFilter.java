@@ -6,8 +6,10 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -16,6 +18,7 @@ import java.util.List;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
+
     private final TokenPort tokenPort;
 
     public JwtAuthFilter(TokenPort tokenPort) {
@@ -23,32 +26,44 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-        String auth = request.getHeader("Authorization");
-        if (auth == null || !auth.startsWith("Bearer")) {
+    protected void doFilterInternal(HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain) throws ServletException, IOException {
+
+        String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
+
+        // No token -> just continue (public endpoints will work, protected ones will be rejected later)
+        if (auth == null || !auth.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
+
         String token = auth.substring(7);
+
         try {
             Long userId = tokenPort.extractUserId(token);
             String email = tokenPort.extractEmail(token);
             Role role = tokenPort.extractRole(token);
 
             var principal = new AuthPrincipal(userId, email, role);
+
             var authorities = (role == null)
-                    ? List.<SimpleGrantedAuthority>of()
-                    : List.of(new SimpleGrantedAuthority("ROLE" + role.name()));
+                ? List.<SimpleGrantedAuthority>of()
+                : List.of(new SimpleGrantedAuthority("ROLE_" + role.name())); // ✅ underscore
+
             var authentication = new UsernamePasswordAuthenticationToken(
-                    principal,
-                    null,
-                    authorities
+                principal, null, authorities
             );
+
+            // ✅ THIS is what tells Spring Security “user is authenticated”
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // ✅ continue filter chain
+            filterChain.doFilter(request, response);
+
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
+            SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
         }
-
     }
 }

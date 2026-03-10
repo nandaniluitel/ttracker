@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/epics")
 public class EpicController {
     private final EpicUseCases epics;
-
     public EpicController(EpicUseCases epics) {
         this.epics = epics;
     }

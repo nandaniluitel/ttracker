@@ -9,7 +9,7 @@ import com.example.ttracker.security.domain.model.TicketStatus;
 import com.example.ttracker.security.domain.model.Priority;
 
 public interface JpaTicketRepository extends JpaRepository<TicketEntity, Long> {
-    boolean existBySprintId(Long id);
+    boolean existsBySprintId(Long id);
     @Modifying(clearAutomatically = true,flushAutomatically = true)
     @Query("update TicketEntity t set t.epicId=null where t.epicId= :epicId")
     int clearEpicForTickets(@Param("epicId") Long epicId);

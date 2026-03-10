@@ -10,7 +10,6 @@ public interface SprintRepositoryPort {
     Optional<Sprint> findByTitle(String title);
     boolean existsById(Long id);
     void deleteById(Long id);
-    boolean hasTickets(Long sprintId);
 
 
 }

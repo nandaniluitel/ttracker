@@ -10,6 +10,7 @@ import com.example.ttracker.ticket.adapter.out.persistence.TicketRepositoryPort;
 import com.example.ttracker.ticket.domain.CreateTicketCommand;
 import com.example.ttracker.ticket.domain.TicketFilter;
 import com.example.ttracker.ticket.domain.UpdateTicketCommand;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,16 +18,17 @@ import java.time.Instant;
 import java.util.List;
 
 @Service
-public class TicketService {
+public class TicketService implements TicketUseCases{
 
     private final TicketRepositoryPort ticketRepository;
     private final TicketHistoryRepositoryPort ticketHistoryRepository;
     private final CurrentUserPort currentUser;
     private final EventPublisherPort eventPublisher;
+
     private final SprintUseCases sprintUseCases;
 
     public TicketService(TicketRepositoryPort ticketRepository, TicketHistoryRepositoryPort ticketHistoryRepository,
-                         CurrentUserPort currentUser, EventPublisherPort eventPublisher, SprintUseCases sprintUseCases) {
+                         CurrentUserPort currentUser, EventPublisherPort eventPublisher,   @Lazy SprintUseCases sprintUseCases) {
         this.ticketRepository = ticketRepository;
         this.ticketHistoryRepository = ticketHistoryRepository;
         this.currentUser = currentUser;
@@ -41,18 +43,23 @@ public class TicketService {
         String description = command.description().trim();
 
         Long userId = currentUser.currentUserId();
-        if (command.storyPoints() < 0) {
+
+        Priority priority=command.priority()==null?Priority.MEDIUM:command.priority();
+        Integer sp=command.storyPoints();
+        if (sp!=null && sp < 0) {
             throw (new LessThanZeroException("Story points must be greater than 0"));
         }
+
         Long sprintId;
         if (command.sprintId() == null) {
             sprintId = sprintUseCases.getBacklogSprintId();
         } else {
-            if (!sprintRepository.existsById(command.sprintId())) {
+            if (!sprintUseCases.existById(command.sprintId())) {
                 throw new IllegalArgumentException("Sprint not found: " + command.sprintId());
             }
             sprintId = command.sprintId();
         }
+
 
 
         Ticket ticketToSave = new Ticket(
@@ -60,8 +67,8 @@ public class TicketService {
                 title,
                 description,
                 TicketStatus.BACKLOG,
-                command.priority(),
-                command.storyPoints(),
+                priority,
+                sp,
                 command.assigneeUserId(),
                 command.epicId(),
                 sprintId,
@@ -100,6 +107,14 @@ public class TicketService {
         return ticketRepository.findById(id).orElseThrow(() -> new NullPointerException("Ticket not found"));
     }
 
+    @Override public Boolean existBySprintId(Long sprintId) {
+        return ticketRepository.existsBySprintId(sprintId);
+    }
+
+    @Override public List<Ticket> list() {
+        return null;
+    }
+
     public List<Ticket> list(TicketFilter filter) {
 
         return ticketRepository.findAll(filter);
@@ -108,15 +123,13 @@ public class TicketService {
     public Ticket update(Long ticketId, UpdateTicketCommand command) {
         Ticket existing = getById(ticketId);
         assertCanEdit(existing);
-        String title = command.title();
-        String description = command.description();
 
         Long editedBy = currentUser.currentUserId();
         Role role = currentUser.currentUserRole();
         Long sprintId = existing.sprintId();
 
         if (command.sprintId() != null) {
-            if (!sprintRepository.existsById(command.sprintId())) {
+            if (!sprintUseCases.existById(command.sprintId())) {
                 throw new IllegalArgumentException("Sprint not found: " + command.sprintId());
             }
             sprintId = command.sprintId();
@@ -124,9 +137,9 @@ public class TicketService {
 
         Ticket updated = new Ticket(
                 existing.id(),
-                title,
-                description,
-                existing.status(),//status cannot be changed
+            command.title() == null ? existing.title() : command.title(),
+         command.description() == null ? existing.description() : command.description(),
+        existing.status(),//status cannot be changed
                 command.priority() == null ? existing.priority() : command.priority(),
                 command.storyPoints() == null ? existing.storyPoints() : command.storyPoints(),
                 command.assigneeUserId(),//allowed null
