@@ -9,5 +9,5 @@ public record UpdateEpicCommand(
     EpicStatus status,       // nullable
     Priority priority,       // nullable
     Long assigneeUserId      // nullable
-) {git
+) {
 }
