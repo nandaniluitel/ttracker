@@ -1,16 +1,18 @@
 package com.example.ttracker.security.application.port.in;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-public record RegisterCommand(String name,String email, String password) {
-    public RegisterCommand{
-        if(name==null || name.isBlank()){
-            throw new IllegalArgumentException("name must not be null");
-        }
-        if(email==null || email.isBlank()){
-            throw new IllegalArgumentException("Email must not be null");
-        }
-        if(password==null || password.isBlank())
-        {
-            throw new IllegalArgumentException("Password must not be null");
-        }
-    }
-}
+// RegisterCommand.java
+public record RegisterCommand(
+    @NotBlank(message = "Name is required")
+    String name,
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
+    String email,
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters")
+    String password
+) {}

@@ -5,6 +5,7 @@ import com.example.ttracker.security.adapters.out.persistence.repo.JpaUserReposi
 import com.example.ttracker.security.application.port.out.UserRepositoryPort;
 import com.example.ttracker.security.domain.model.Role;
 import com.example.ttracker.security.domain.model.User;
+import java.util.List;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -38,5 +39,10 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
 
     private User toDomain(UserEntity e) {
         return new User(e.getId(),e.getName(),e.getProfileImageUrl(), e.getEmail(), e.getPasswordHash(), Role.valueOf(e.getRole()), e.getCreatedAt());
+    }
+
+    @Override
+    public List<User> findAll() {
+        return jpa.findAll().stream().map(this::toDomain).toList();
     }
 }

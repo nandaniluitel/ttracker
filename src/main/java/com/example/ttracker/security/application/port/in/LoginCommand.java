@@ -1,13 +1,16 @@
 package com.example.ttracker.security.application.port.in;
 
-public record LoginCommand(String email, String password) {
-    public LoginCommand{
-        if(email==null || email.isBlank()){
-            throw new IllegalArgumentException("Email must not be null during login");
-        }
-        if(password==null || password.isBlank())
-        {
-            throw new IllegalArgumentException("Password must not be null during login");
-        }
-    }
-}
+// LoginCommand.java
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record LoginCommand(
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
+    String email,
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters")
+    String password
+) {}
