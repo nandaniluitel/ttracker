@@ -32,9 +32,10 @@ public class AuthService implements AuthUseCases {
         userRepository.findByEmail(email).ifPresent(u -> {
             throw new IllegalArgumentException("Email already registered");
         });
+        String name = command.name();
         Role role = Role.USER;
 
-        User userToSave = new User(null, email, passwordHash.hash(command.password()), role, Instant.now());
+        User userToSave = new User(null,name,null, email, passwordHash.hash(command.password()), role, Instant.now());
         return userRepository.save(userToSave);
 
     }

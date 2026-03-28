@@ -12,10 +12,10 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //@Column(name = "name", nullable = false)
-    //private String name;
-    //@Column(name = "profile_image_url")
-    //private String profileImageUrl;
+    @Column(name = "name", nullable = false)
+    private String name;
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
     @Column(nullable = false, unique = true)
     private String email;
     @Column(name = "password_hash", nullable = false)
@@ -25,7 +25,26 @@ public class UserEntity {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    public UserEntity(String email, String passwordHash, String role, Instant createdAt) {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public UserEntity(String name, String profileImageUrl, String email, String passwordHash, String role,
+        Instant createdAt) {
+        this.name = name;
+        this.profileImageUrl = profileImageUrl;
         this.email = email;
         this.passwordHash = passwordHash;
         this.role = role;
@@ -36,11 +55,11 @@ public class UserEntity {
     }
 
     public static UserEntity from(User user) {
-        return new UserEntity(user.email(), user.passwordHash(), user.role().name(), user.createdAt());
+        return new UserEntity(user.name(), user.profileImageUrl(), user.email(), user.passwordHash(), user.role().name(), user.createdAt());
     }
 
     public static User toDomain(UserEntity userEntity) {
-        return new User(userEntity.getId(), userEntity.getEmail(), userEntity.getPasswordHash(), Role.valueOf(userEntity.getRole().toString()), userEntity.createdAt);
+        return new User(userEntity.getId(),userEntity.getName(),null, userEntity.getEmail(), userEntity.getPasswordHash(), Role.valueOf(userEntity.getRole().toString()), userEntity.createdAt);
     }
 
     public Long getId() {
@@ -50,6 +69,7 @@ public class UserEntity {
     public void setId(Long id) {
         this.id = id;
     }
+
 
     public String getEmail() {
         return email;

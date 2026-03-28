@@ -26,8 +26,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<RegisterResponse> register(@Valid @RequestBody RegisterRequest req) {
-        User u = auth.register(new RegisterCommand(req.email, req.password()));
-        return ResponseEntity.ok(new RegisterResponse(u.id(), u.email(), u.role().name()));
+        User u = auth.register(new RegisterCommand(req.name,req.email, req.password()));
+        return ResponseEntity.ok(new RegisterResponse(u.id(),u.name(), u.email(), u.role().name()));
     }
 
     ;
@@ -40,10 +40,10 @@ public class AuthController {
 
     ;
 
-    public record RegisterRequest(@Email @NotBlank String email, @NotBlank String password) {
+    public record RegisterRequest(@NotBlank String name, @Email @NotBlank String email, @NotBlank String password) {
     }
 
-    public record RegisterResponse(Long id, String email, String role) {
+    public record RegisterResponse(Long id,String name, String email, String role) {
     }
 
     ;

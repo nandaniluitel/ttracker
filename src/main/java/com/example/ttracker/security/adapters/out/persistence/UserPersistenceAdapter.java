@@ -37,6 +37,6 @@ public class UserPersistenceAdapter implements UserRepositoryPort {
     }
 
     private User toDomain(UserEntity e) {
-        return new User(e.getId(), e.getEmail(), e.getPasswordHash(), Role.valueOf(e.getRole()), e.getCreatedAt());
+        return new User(e.getId(),e.getName(),e.getProfileImageUrl(), e.getEmail(), e.getPasswordHash(), Role.valueOf(e.getRole()), e.getCreatedAt());
     }
 }
