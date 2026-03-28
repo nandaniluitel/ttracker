@@ -1,9 +1,9 @@
 package com.example.ttracker.adapters.out.persistence;
 
 import com.example.ttracker.application.service.MySqlTestcontainerBase;
-import com.example.ttracker.security.domain.model.TicketHistory;
-import com.example.ttracker.security.domain.model.TicketHistoryAction;
-import com.example.ttracker.security.domain.model.TicketStatus;
+import com.example.ttracker.ticket.domain.TicketHistory;
+import com.example.ttracker.ticket.domain.TicketHistoryAction;
+import com.example.ttracker.ticket.domain.TicketStatus;
 import java.time.Instant;
 
 import com.example.ttracker.ticket.adapter.out.persistence.TicketHistoryPersistenceAdapter;

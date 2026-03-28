@@ -12,6 +12,10 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    //@Column(name = "name", nullable = false)
+    //private String name;
+    //@Column(name = "profile_image_url")
+    //private String profileImageUrl;
     @Column(nullable = false, unique = true)
     private String email;
     @Column(name = "password_hash", nullable = false)

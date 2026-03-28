@@ -1,7 +1,7 @@
 package com.example.ttracker.sprint.adapter.out.persistence;
 
-import com.example.ttracker.security.domain.model.Sprint;
-import com.example.ttracker.security.domain.model.SprintStatus;
+import com.example.ttracker.sprint.domain.Sprint;
+import com.example.ttracker.sprint.domain.SprintStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

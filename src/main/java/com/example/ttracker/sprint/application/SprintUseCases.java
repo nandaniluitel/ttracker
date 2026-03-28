@@ -1,7 +1,7 @@
 package com.example.ttracker.sprint.application;
 
-import com.example.ttracker.security.domain.model.Sprint;
-import com.example.ttracker.security.domain.model.Ticket;
+import com.example.ttracker.sprint.domain.Sprint;
+import com.example.ttracker.ticket.domain.Ticket;
 import com.example.ttracker.sprint.domain.CreateSprintCommand;
 import com.example.ttracker.sprint.domain.UpdateSprintCommand;
 

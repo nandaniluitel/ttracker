@@ -1,7 +1,6 @@
 package com.example.ttracker.sprint.adapter.out.persistence;
 
-import com.example.ttracker.security.domain.model.Sprint;
-import com.example.ttracker.ticket.application.TicketUseCases;
+import com.example.ttracker.sprint.domain.Sprint;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;

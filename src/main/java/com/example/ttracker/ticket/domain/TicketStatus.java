@@ -1,4 +1,4 @@
-package com.example.ttracker.security.domain.model;
+package com.example.ttracker.ticket.domain;
 
 public enum TicketStatus {
 

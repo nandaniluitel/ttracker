@@ -1,5 +1,6 @@
-package com.example.ttracker.security.domain.model;
+package com.example.ttracker.ticket.domain;
 
+import com.example.ttracker.security.domain.model.Priority;
 import java.time.Instant;
 
 public record Ticket(

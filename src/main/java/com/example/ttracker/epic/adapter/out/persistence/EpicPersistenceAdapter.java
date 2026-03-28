@@ -1,6 +1,6 @@
 package com.example.ttracker.epic.adapter.out.persistence;
 
-import com.example.ttracker.security.domain.model.Epic;
+import com.example.ttracker.epic.domain.Epic;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;

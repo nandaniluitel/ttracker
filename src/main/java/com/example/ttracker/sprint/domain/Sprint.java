@@ -1,5 +1,6 @@
-package com.example.ttracker.security.domain.model;
+package com.example.ttracker.sprint.domain;
 
+import com.example.ttracker.sprint.domain.SprintStatus;
 import java.time.Instant;
 import java.time.LocalDate;
 

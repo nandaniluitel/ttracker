@@ -1,6 +1,6 @@
 -- 1) Seed a system admin user (so Backlog can have created_by_user_id)
 INSERT INTO users (id, email, password_hash, role, created_at)
-VALUES (1, 'system@ttracker.local', 'x', 'ADMIN', CURRENT_TIMESTAMP(6))
+VALUES (1, 'system@ttracker.local', '$2a$12$ZekWNj.r/U7dg5CPQCB5..nHNgKs9Bn2x6EL8S1Ec0XMuJqF1BK8S', 'ADMIN', CURRENT_TIMESTAMP(6))
 ON DUPLICATE KEY UPDATE
   email = VALUES(email),
   role = VALUES(role);

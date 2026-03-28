@@ -1,5 +1,6 @@
-package com.example.ttracker.security.domain.model;
+package com.example.ttracker.epic.domain;
 
+import com.example.ttracker.security.domain.model.Priority;
 import java.time.Instant;
 
 public record Epic(

@@ -1,8 +1,8 @@
 package com.example.ttracker.ticket.adapter.out.persistence;
 
 import com.example.ttracker.security.domain.model.Priority;
-import com.example.ttracker.security.domain.model.Ticket;
-import com.example.ttracker.security.domain.model.TicketStatus;
+import com.example.ttracker.ticket.domain.Ticket;
+import com.example.ttracker.ticket.domain.TicketStatus;
 import jakarta.persistence.*;
 
 import java.time.Instant;

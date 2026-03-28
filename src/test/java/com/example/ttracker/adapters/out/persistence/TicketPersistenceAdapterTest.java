@@ -3,9 +3,9 @@ package com.example.ttracker.adapters.out.persistence;
 import com.example.ttracker.ticket.domain.TicketFilter;
 import com.example.ttracker.application.service.MySqlTestcontainerBase;
 import com.example.ttracker.security.domain.model.Priority;
-import com.example.ttracker.security.domain.model.Ticket;
+import com.example.ttracker.ticket.domain.Ticket;
 
-import com.example.ttracker.security.domain.model.TicketStatus;
+import com.example.ttracker.ticket.domain.TicketStatus;
 import java.sql.Timestamp;
 import java.time.Instant;
 
@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,7 +1,7 @@
 package com.example.ttracker.ticket.adapter.out.persistence;
 
 import com.example.ttracker.ticket.domain.TicketFilter;
-import com.example.ttracker.security.domain.model.Ticket;
+import com.example.ttracker.ticket.domain.Ticket;
 
 import java.util.List;
 import java.util.Optional;

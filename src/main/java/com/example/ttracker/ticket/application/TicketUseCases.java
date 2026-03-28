@@ -1,7 +1,7 @@
 package com.example.ttracker.ticket.application;
 
-import com.example.ttracker.security.domain.model.Ticket;
-import com.example.ttracker.security.domain.model.TicketStatus;
+import com.example.ttracker.ticket.domain.Ticket;
+import com.example.ttracker.ticket.domain.TicketStatus;
 import com.example.ttracker.ticket.domain.CreateTicketCommand;
 import com.example.ttracker.ticket.domain.TicketFilter;
 import com.example.ttracker.ticket.domain.UpdateTicketCommand;

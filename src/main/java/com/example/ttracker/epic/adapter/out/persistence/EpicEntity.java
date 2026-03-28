@@ -1,7 +1,7 @@
 package com.example.ttracker.epic.adapter.out.persistence;
 
-import com.example.ttracker.security.domain.model.Epic;
-import com.example.ttracker.security.domain.model.EpicStatus;
+import com.example.ttracker.epic.domain.Epic;
+import com.example.ttracker.epic.domain.EpicStatus;
 import com.example.ttracker.security.domain.model.Priority;
 import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;

@@ -1,6 +1,6 @@
 package com.example.ttracker.epic.application;
 
-import com.example.ttracker.security.domain.model.Epic;
+import com.example.ttracker.epic.domain.Epic;
 import com.example.ttracker.epic.domain.CreateEpicCommand;
 import com.example.ttracker.epic.domain.UpdateEpicCommand;
 

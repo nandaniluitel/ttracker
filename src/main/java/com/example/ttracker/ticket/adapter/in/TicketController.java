@@ -6,8 +6,8 @@ import com.example.ttracker.ticket.domain.CreateTicketCommand;
 import com.example.ttracker.ticket.domain.TicketFilter;
 import com.example.ttracker.ticket.domain.UpdateTicketCommand;
 import com.example.ttracker.security.domain.model.Priority;
-import com.example.ttracker.security.domain.model.Ticket;
-import com.example.ttracker.security.domain.model.TicketStatus;
+import com.example.ttracker.ticket.domain.Ticket;
+import com.example.ttracker.ticket.domain.TicketStatus;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +16,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Locale;
 
 @RestController
 @RequestMapping("/tickets")

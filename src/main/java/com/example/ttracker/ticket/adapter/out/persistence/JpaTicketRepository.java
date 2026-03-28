@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import com.example.ttracker.security.domain.model.TicketStatus;
+import com.example.ttracker.ticket.domain.TicketStatus;
 import com.example.ttracker.security.domain.model.Priority;
 
 public interface JpaTicketRepository extends JpaRepository<TicketEntity, Long> {
