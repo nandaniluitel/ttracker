@@ -55,7 +55,16 @@ public class UserEntity {
     }
 
     public static UserEntity from(User user) {
-        return new UserEntity(user.name(), user.profileImageUrl(), user.email(), user.passwordHash(), user.role().name(), user.createdAt());
+        UserEntity entity = new UserEntity(
+            user.name(),
+            user.profileImageUrl(),
+            user.email(),
+            user.passwordHash(),
+            user.role().name(),
+            user.createdAt()
+        );
+        entity.setId(user.id());
+        return entity;
     }
 
     public static User toDomain(UserEntity userEntity) {
