@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/auth/register", "/auth/login").permitAll()
+                .requestMatchers(HttpMethod.GET, "/users/**").authenticated()
                 .requestMatchers("/users/**").hasRole("ADMIN")
                 .requestMatchers("/profile").authenticated()
                 .anyRequest().authenticated()
