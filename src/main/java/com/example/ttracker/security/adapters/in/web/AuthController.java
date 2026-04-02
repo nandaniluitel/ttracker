@@ -48,12 +48,18 @@ public class AuthController {
         log.info("[AuthController] Login successful for email={}", req.email());
         return ResponseEntity.ok(token);
     }
-@PostMapping("/logout")
-public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader){
-        String token = authHeader.replace("Bearer ","");
-        blacklistService.blacklist(token);
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.replace("Bearer ", "");
+            try {
+                blacklistService.blacklist(token);
+            } catch (Exception e) {
+                // token already expired, nothing to blacklist
+            }
+        }
         return ResponseEntity.ok().build();
-}
+    }
 
     // ── Request / Response records ────────────────────────────────────────────
 
