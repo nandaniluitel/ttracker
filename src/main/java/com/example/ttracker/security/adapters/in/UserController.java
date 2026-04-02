@@ -1,4 +1,4 @@
-package com.example.ttracker.security.adapters.in.web;
+package com.example.ttracker.security.adapters.in;
 
 import com.example.ttracker.security.application.port.in.UserUseCases;
 import com.example.ttracker.security.domain.model.Role;

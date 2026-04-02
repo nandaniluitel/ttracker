@@ -1,6 +1,7 @@
 package com.example.ttracker.security.adapters.in.jwt;
 
 import com.example.ttracker.security.application.port.out.TokenPort;
+import com.example.ttracker.security.application.service.BlacklistService;
 import com.example.ttracker.security.domain.model.Role;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,9 +21,11 @@ import java.util.List;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final TokenPort tokenPort;
+    private final BlacklistService blacklistService;
 
-    public JwtAuthFilter(TokenPort tokenPort) {
+    public JwtAuthFilter(TokenPort tokenPort, BlacklistService blacklistService) {
         this.tokenPort = tokenPort;
+        this.blacklistService = blacklistService;
     }
 
     @Override
@@ -44,7 +47,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         String token = auth.substring(7);
-
+        if (blacklistService.isBlacklisted(token)) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Token has been invalidated");
+            return;
+        }
         try {
             Long userId = tokenPort.extractUserId(token);
             String email = tokenPort.extractEmail(token);

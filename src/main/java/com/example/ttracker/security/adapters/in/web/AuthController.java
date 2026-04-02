@@ -4,6 +4,7 @@ import com.example.ttracker.security.application.port.in.AuthResponse;
 import com.example.ttracker.security.application.port.in.AuthUseCases;
 import com.example.ttracker.security.application.port.in.LoginCommand;
 import com.example.ttracker.security.application.port.in.RegisterCommand;
+import com.example.ttracker.security.application.service.BlacklistService;
 import com.example.ttracker.security.domain.model.User;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -21,9 +22,11 @@ public class AuthController {
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private final AuthUseCases auth;
+    private final BlacklistService blacklistService;
 
-    public AuthController(AuthUseCases auth) {
+    public AuthController(AuthUseCases auth, BlacklistService blacklistService) {
         this.auth = auth;
+        this.blacklistService = blacklistService;
     }
 
     @PostMapping("/register")
@@ -45,6 +48,12 @@ public class AuthController {
         log.info("[AuthController] Login successful for email={}", req.email());
         return ResponseEntity.ok(token);
     }
+@PostMapping("/logout")
+public ResponseEntity<?> logout(@RequestHeader("Authorization") String authHeader){
+        String token = authHeader.replace("Bearer","");
+        blacklistService.blacklist(token);
+        return ResponseEntity.ok().build();
+}
 
     // ── Request / Response records ────────────────────────────────────────────
 

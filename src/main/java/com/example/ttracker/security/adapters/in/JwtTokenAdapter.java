@@ -26,20 +26,25 @@ public class JwtTokenAdapter implements TokenPort {
         this.expirationSeconds = expirationSeconds;
     }
 
+    @Override public long getRemainingMillis(String token) {
+        Date expiration = parse(token).getPayload().getExpiration();
+        return Math.max(0,expiration.getTime()-System.currentTimeMillis());
+    }
+
     @Override
     public String generateToken(Long userId, String email, Role role) {
         Instant now = Instant.now();
         Instant exp = now.plusSeconds(expirationSeconds);
         return Jwts.builder()
-                .subject(email)
-                .claims(Map.of(
-                        "uid", userId,
-                        "role", role.name()
-                ))
-                .issuedAt(Date.from(now))
-                .expiration(Date.from(exp))
-                .signWith(key)
-                .compact();
+            .subject(email)
+            .claims(Map.of(
+                "uid", userId,
+                "role", role.name()
+            ))
+            .issuedAt(Date.from(now))
+            .expiration(Date.from(exp))
+            .signWith(key)
+            .compact();
     }
 
     private Jws<Claims> parse(String token) {
